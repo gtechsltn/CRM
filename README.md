@@ -1,6 +1,10 @@
 # CRM
 > Simple CRM model in C# using .NET 3.1 created for Programing classes.
 
++ https://github.com/gtechsltn/CRM
++ https://github.com/gtechsltn/CRMS/
++ https://github.com/gtechsltn/CRM-ASPX/
+
 ## Table of contents
 - [CRM](#crm)
   - [Table of contents](#table-of-contents)
