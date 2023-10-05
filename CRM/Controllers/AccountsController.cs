@@ -1,19 +1,18 @@
+using CRM.Data;
+using CRM.Models;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using CRM.Data;
-using CRM.Models;
-using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace CRM.Controllers
 {
@@ -26,8 +25,8 @@ namespace CRM.Controllers
             _context = context;
         }
 
-        const string UserName = "_Name";
-        const string SessionAge = "_Age";
+        private const string UserName = "_Name";
+        private const string SessionAge = "_Age";
 
         [HttpGet]
         [Authorize]
@@ -43,7 +42,7 @@ namespace CRM.Controllers
                 return View(user);
             }
         }
-        
+
         [HttpGet]
         public ActionResult Login()
         {
@@ -54,6 +53,9 @@ namespace CRM.Controllers
         {
             // For this sample, all logins are successful.
             var user = await _context.User.FirstOrDefaultAsync(m => m.Login == userName);
+
+            if (user == null) return false;
+
             try
             {
                 if (password == user.Password && user.IsDeleted == 0)
@@ -64,7 +66,8 @@ namespace CRM.Controllers
                 {
                     return false;
                 }
-            } catch(Exception)
+            }
+            catch (Exception)
             {
                 return false;
             }
@@ -86,7 +89,6 @@ namespace CRM.Controllers
             //    return "User";
             //}
         }
-
 
         [HttpPost]
         public async Task<IActionResult> Login(LoginModel model)
@@ -122,7 +124,6 @@ namespace CRM.Controllers
             {
                 return View(model);
             }
-
         }
 
         public IActionResult Register()
@@ -131,7 +132,7 @@ namespace CRM.Controllers
         }
 
         // POST: Users/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -140,7 +141,7 @@ namespace CRM.Controllers
             try
             {
                 var user1 = await _context.User.FirstOrDefaultAsync(m => m.Login == user.Login);
-                if (user1.Id == 0)
+                if (user1 == null || user.Id == 0)
                 {
                     if (ModelState.IsValid)
                     {
@@ -150,7 +151,8 @@ namespace CRM.Controllers
                         return RedirectToAction("Login");
                     }
                     return View(user);
-                } else
+                }
+                else
                 {
                     ModelState.AddModelError("", "Login is taken");
                     return View(user);
@@ -170,7 +172,6 @@ namespace CRM.Controllers
                     ModelState.AddModelError("", "Invalid data");
                     return View(user);
                 }
-                
             }
         }
 
@@ -189,11 +190,11 @@ namespace CRM.Controllers
         }
 
         // POST: Users/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id,User user)
+        public async Task<IActionResult> Edit(int id, User user)
         {
             if (id != user.Id)
             {
@@ -202,21 +203,21 @@ namespace CRM.Controllers
             var adminnumber = await _context.User.CountAsync(m => m.RoleId == 1);
             ViewBag.Message = null;
 
-
-            //if(user1.Id != 0) { 
+            //if(user1.Id != 0) {
             //    var login = user1.Login;
             //}
             try
             {
                 int x = await LoginUnChangedAsync(id, user.Login);
                 //var user1 = await _context.User.FirstOrDefaultAsync(m => m.Login == user.Login);
-                if (x<3/*user1.Id == 0 || user1.Id == id*/)
+                if (x < 3/*user1.Id == 0 || user1.Id == id*/)
                 {
                     if (ModelState.IsValid)
                     {
                         //_context.Update(user1);
                         //_context.Remove(user1);
-                        if (adminnumber > 2 || user.RoleId == 1) {
+                        if (adminnumber > 2 || user.RoleId == 1)
+                        {
                             if (!IsMD5(user.Password))
                             {
                                 user.Password = HashPassword(user.Password);
@@ -237,7 +238,8 @@ namespace CRM.Controllers
                                 await HttpContext.SignInAsync(new ClaimsPrincipal(new ClaimsIdentity(claims, "Cookies", "user", "role")));
                             }
                             return RedirectToAction("Details");
-                        } else
+                        }
+                        else
                         {
                             ViewBag.Message = String.Format("You cannot delete more admins! There must be at least 2 of them!");
                             return View(user);
@@ -280,7 +282,6 @@ namespace CRM.Controllers
                     ModelState.AddModelError("", "Invalid data");
                     return View(user);
                 }
-
             }
             //user1 = await _context.User.FirstOrDefaultAsync(m => m.Login == user.Login);
             //var user2 = await _context.User.FindAsync(id);
@@ -292,7 +293,7 @@ namespace CRM.Controllers
             //        try
             //        {
             //            _context.Update(user1);
-            //            //else { 
+            //            //else {
             //            //_context.Add(user1);
             //            //}
             //            //_context.Update(user);
@@ -429,10 +430,8 @@ namespace CRM.Controllers
                 ViewBag.Message = String.Format("You cannot delete more admins! There must be at least 2 of them!");
                 return View(user);
             }
-
-
-
         }
+
         public static bool IsMD5(string input)
         {
             if (String.IsNullOrEmpty(input))
@@ -449,18 +448,19 @@ namespace CRM.Controllers
             {
                 return 1;
             }
-            else { 
-            //var user = await _context.User.FindAsync(id);
-            var user1 = await _context.User.FirstOrDefaultAsync(m => m.Login == login);
-            if (user1 == null)
-            {
-                return 2;
-            }
             else
             {
-                return 3;
+                //var user = await _context.User.FindAsync(id);
+                var user1 = await _context.User.FirstOrDefaultAsync(m => m.Login == login);
+                if (user1 == null)
+                {
+                    return 2;
+                }
+                else
+                {
+                    return 3;
+                }
             }
-        }
         }
     }
 }

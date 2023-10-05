@@ -1,17 +1,15 @@
+using CRM.Data;
+using CRM.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
+using ReflectionIT.Mvc.Paging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using CRM.Data;
-using CRM.Models;
-using Microsoft.AspNetCore.Authorization;
-using ReflectionIT.Mvc.Paging;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.EntityFrameworkCore.Internal;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace CRM.Controllers
 {
@@ -40,7 +38,7 @@ namespace CRM.Controllers
             ViewBag.userId = user.Id;
             //Console.WriteLine(category);
             //Console.WriteLine(selected);
-            for(int x = 0; x < selected.Length; x++)
+            for (int x = 0; x < selected.Length; x++)
             {
                 //Console.WriteLine(selected[x]);
             }
@@ -53,7 +51,7 @@ namespace CRM.Controllers
             {
                 qry = qry.Where(m => m.CreationDate >= start);
             }
-            if  (end != null)
+            if (end != null)
             {
                 qry = qry.Where(m => m.CreationDate <= end);
             }
@@ -67,7 +65,7 @@ namespace CRM.Controllers
             //}
             //if (!string.IsNullOrWhiteSpace(category))
             ViewBag.selected = null;
-            if(selected.Length > 0)
+            if (selected.Length > 0)
             {
                 ViewBag.selected = selected;
                 //Console.WriteLine(category);
@@ -93,12 +91,13 @@ namespace CRM.Controllers
                     if (end != null)
                     {
                         qry = _context.Company.Where(p => data.Contains(p.BusinessId) && p.CreationDate >= start && p.CreationDate <= end);
-                    } else
+                    }
+                    else
                     {
                         qry = _context.Company.Where(p => data.Contains(p.BusinessId) && p.CreationDate >= start);
-
                     }
-                } else
+                }
+                else
                 {
                     if (end != null)
                     {
@@ -107,7 +106,6 @@ namespace CRM.Controllers
                     else
                     {
                         qry = _context.Company.Where(p => data.Contains(p.BusinessId));
-
                     }
                 }
                 //qry = qry.Where(p => p.BusinessId == data[1]);
@@ -142,7 +140,8 @@ namespace CRM.Controllers
                 //{
                 //    Console.WriteLine(number.Id + " " + number.Name);
                 //}
-            } else
+            }
+            else
             {
                 if (start != null)
                 {
@@ -153,7 +152,6 @@ namespace CRM.Controllers
                     else
                     {
                         qry = _context.Company.Where(p => p.CreationDate >= start);
-
                     }
                 }
                 else
@@ -250,7 +248,7 @@ namespace CRM.Controllers
         }
 
         // POST: Companies/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -259,12 +257,14 @@ namespace CRM.Controllers
             //return View(model.Company);
             if (ModelState.IsValid)
             {
-                try {
-                company.IsDeleted = 0;
-                _context.Add(company);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-                } catch (DbUpdateException)
+                try
+                {
+                    company.IsDeleted = 0;
+                    _context.Add(company);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateException)
                 {
                     List<Business> businessesList = _context.Business.ToList();
                     ViewBag.data = businessesList;
@@ -290,7 +290,7 @@ namespace CRM.Controllers
             }
 
             var company = await _context.Company.FindAsync(id);
-            
+
             if (company == null)
             {
                 return NotFound();
@@ -303,7 +303,7 @@ namespace CRM.Controllers
         }
 
         // POST: Companies/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -334,7 +334,7 @@ namespace CRM.Controllers
                         throw;
                     }
                 }
-                catch(DbUpdateException)
+                catch (DbUpdateException)
                 {
                     ModelState.AddModelError("", "NIP is taken");
                     return View(company);

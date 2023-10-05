@@ -1,20 +1,17 @@
 using CRM.Data;
-using Microsoft.EntityFrameworkCore;
-using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.Extensions.Options;
 using ReflectionIT.Mvc.Paging;
+using System;
 
 namespace CRM
 {
     public class Startup
     {
-
         public const string CookieScheme = "YourSchemeName";
 
         public Startup(IConfiguration configuration)
@@ -28,7 +25,8 @@ namespace CRM
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddPaging(options => {
+            services.AddPaging(options =>
+            {
                 options.ViewName = "Bootstrap5";
                 options.HtmlIndicatorDown = " <span>&darr;</span>";
                 options.HtmlIndicatorUp = " <span>&uarr;</span>";
@@ -38,8 +36,9 @@ namespace CRM
             options.UseSqlite(Configuration.GetConnectionString("CRMContext")));
 
             services.AddDistributedMemoryCache();
-            services.AddSession(options => {
-                options.IdleTimeout = TimeSpan.FromMinutes(1);//You can set Time   
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(1);//You can set Time
             });
             services.AddMvc();
             services.AddAuthentication(CookieScheme) // Sets the default scheme to cookies
@@ -48,7 +47,6 @@ namespace CRM
                     options.AccessDeniedPath = "/accounts/denied";
                     options.LoginPath = "/accounts/login";
                 });
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -80,12 +78,6 @@ namespace CRM
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
-
-
-
-
-
-
         }
     }
 }

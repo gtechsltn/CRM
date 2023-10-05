@@ -1,18 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using CRM.Data;
 using CRM.Models;
-using ReflectionIT.Mvc.Paging;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ReflectionIT.Mvc.Paging;
+using System;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace CRM.Controllers
 {
@@ -35,7 +32,7 @@ namespace CRM.Controllers
         {
             var qry = _context.User.AsNoTracking().OrderBy(p => p.Id).Where(p => p.IsDeleted == 0);
             var model = await PagingList.CreateAsync(qry, 6, page, sortExpression, "Id");
-            string[] roles = { "Admin" , "Moderator", "User"};
+            string[] roles = { "Admin", "Moderator", "User" };
             ViewBag.roles = roles;
             return View(model);
         }
@@ -68,22 +65,24 @@ namespace CRM.Controllers
         }
 
         // POST: Users/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create( User user)
+        public async Task<IActionResult> Create(User user)
         {
             try
             {
                 var user1 = await _context.User.AsNoTracking().FirstOrDefaultAsync(m => m.Login == user.Login);
-                if (user1 == null) { 
+                if (user1 == null)
+                {
                     user.Password = HashPassword(user.Password);
                     user.IsDeleted = 0;
                     _context.Add(user);
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
-                } else
+                }
+                else
                 {
                     ModelState.AddModelError("", "Login is taken");
                     return View(user);
@@ -114,7 +113,7 @@ namespace CRM.Controllers
         }
 
         // POST: Users/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -126,10 +125,8 @@ namespace CRM.Controllers
             }
             var adminnumber = await _context.User.CountAsync(m => m.RoleId == 1);
 
-
             //var user1 = await _context.User.FirstOrDefaultAsync(m => m.Login == user.Login);
             //var user2 = await _context.User.FindAsync(id);
-
 
             try
             {
@@ -153,7 +150,8 @@ namespace CRM.Controllers
                             _context.Update(user);
                             await _context.SaveChangesAsync();
                             return RedirectToAction("Index");
-                        } else
+                        }
+                        else
                         {
                             ViewBag.Message = String.Format("You cannot demote more admins! There must be at least 2 of them!");
                             return View(user);
@@ -169,7 +167,6 @@ namespace CRM.Controllers
                     //    }
                     //    else
                     //    {
-                                
                     //    }
                     //}
                     //return RedirectToAction("Index");
@@ -179,7 +176,8 @@ namespace CRM.Controllers
                     ModelState.AddModelError("", "Login is taken");
                     return View(user);
                 }
-            } catch (Exception)
+            }
+            catch (Exception)
             {
                 //throw;
                 try
@@ -197,7 +195,8 @@ namespace CRM.Controllers
                         _context.Update(user);
                         await _context.SaveChangesAsync();
                         return View(user);
-                    } else
+                    }
+                    else
                     {
                         return View(user);
                     }
@@ -209,8 +208,6 @@ namespace CRM.Controllers
                     return View(user);
                 }
             }
-            
-            
         }
 
         // GET: Users/Delete/5
@@ -238,11 +235,11 @@ namespace CRM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-
             var user = await _context.User.FindAsync(id);
             var adminnumber = await _context.User.CountAsync(m => m.RoleId == 1);
             ViewBag.Message = null;
-            if (adminnumber > 2 || user.RoleId != 1) {
+            if (adminnumber > 2 || user.RoleId != 1)
+            {
                 /*var companyNumber = await _context.Company.CountAsync(m => m.UserId == user.Id);
                 while (companyNumber > 0)
                 {
@@ -288,7 +285,8 @@ namespace CRM.Controllers
                 user.IsDeleted = 1;
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
-            }   else
+            }
+            else
             {
                 ViewBag.Message = String.Format("You cannot delete more admins! There must be at least 2 of them!");
                 return View(user);
@@ -315,6 +313,7 @@ namespace CRM.Controllers
 
             return Convert.ToString(sb);
         }
+
         public static bool IsMD5(string input)
         {
             if (String.IsNullOrEmpty(input))

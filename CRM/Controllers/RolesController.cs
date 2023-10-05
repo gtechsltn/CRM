@@ -1,13 +1,9 @@
-using System;
-using System.Collections.Generic;
+using CRM.Data;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using CRM.Data;
-using CRM.Models;
-using Microsoft.AspNetCore.Authorization;
 
 namespace CRM.Controllers
 {
@@ -58,7 +54,7 @@ namespace CRM.Controllers
         //}
 
         //// POST: Roles/Create
-        //// To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        //// To protect from overposting attacks, enable the specific properties you want to bind to, for
         //// more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         //[HttpPost]
         //[ValidateAntiForgeryToken]
@@ -91,7 +87,7 @@ namespace CRM.Controllers
         //}
 
         // POST: Roles/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         //[HttpPost]
         //[ValidateAntiForgeryToken]
